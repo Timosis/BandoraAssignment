@@ -123,13 +123,27 @@
                     CustomerOrdersGridUpdate(grid);
                     $('#generalModal').html('');
                     $('#m_modal_general').modal('hide');
+                    $.notify({
+                        title: '<strong>Success!</strong>',
+                        message: result.Message
+                    }, {
+                        type: 'success',
+                        animate: {
+                            enter: 'animated fadeInRight',
+                            exit: 'animated fadeOutRight'
+                        }
+                    });
                 } else {
-                    if (result.Type == 2) {
-                        $(".alert-danger").text(result.Message).slideDown('slow').delay(1500).slideUp('slow');
-                    }
-                    else {
-                        $(".alert-warning").text(result.Message).slideDown('slow').delay(1500).slideUp('slow');;
-                    }
+                    $.notify({
+                        title: '<strong>Error!</strong>',
+                        message: result.Message
+                    }, {
+                        type: 'Error',
+                        animate: {
+                            enter: 'animated fadeInRight',
+                            exit: 'animated fadeOutRight'
+                        }
+                    });
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
