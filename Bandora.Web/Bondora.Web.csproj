@@ -14,7 +14,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Bandora.Models\Bandora.Models.csproj" />
+    <ProjectReference Include="..\Bandora.Models\Bondora.Models.csproj" />
   </ItemGroup>
 
 </Project>

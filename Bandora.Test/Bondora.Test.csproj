@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bandora.Models\Bandora.Models.csproj" />
-    <ProjectReference Include="..\Bandora.Web\Bandora.Web.csproj" />
+    <ProjectReference Include="..\Bandora.Models\Bondora.Models.csproj" />
+    <ProjectReference Include="..\Bandora.Web\Bondora.Web.csproj" />
     <ProjectReference Include="..\Bondora.Api\Bondora.Api.csproj" />
   </ItemGroup>
 

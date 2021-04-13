@@ -13,11 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bondora.Api", "Bondora.Api\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.Common", "4.Common", "{7C366819-1CE8-478C-AD7C-D717C44A4041}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bandora.Models", "Bandora.Models\Bandora.Models.csproj", "{E215AB4A-F89A-498F-8378-9D3B8B489CBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bondora.Models", "Bandora.Models\Bondora.Models.csproj", "{E215AB4A-F89A-498F-8378-9D3B8B489CBE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bandora.Web", "Bandora.Web\Bandora.Web.csproj", "{97AA4925-194D-407E-A161-43FD895F8988}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bondora.Web", "Bandora.Web\Bondora.Web.csproj", "{97AA4925-194D-407E-A161-43FD895F8988}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bandora.Test", "Bandora.Test\Bandora.Test.csproj", "{2DEA7A18-0A0D-44C6-BB12-F53FB97A696E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bondora.Test", "Bandora.Test\Bondora.Test.csproj", "{2DEA7A18-0A0D-44C6-BB12-F53FB97A696E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
