@@ -1,0 +1,113 @@
+﻿@model Bandora.Models.CustomerVM
+<div class="row">
+    <div class="col-6">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Firstname</h5>
+                <h6 class="card-subtitle mb-2 text-muted">@Model.Lastname</h6>
+                <p class="card-text">@Model.Email</p>
+            </div>
+        </div>
+        <br />
+    </div>
+
+    <div class="col-6">
+        <button type="button" onclick="RentEquipment(@Model.Id)" class="btn btn-primary" data-toggle="modal" data-target="#m_modal_general">Rent Equipment</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                Customer's Orders
+            </div>
+            <div class="card-body">
+                <!--begin: Datatable -->
+                <div id="CustomerOrders">
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        // Customer orders grid(datatable) implementation
+        var grid = new ej.grids.Grid({
+            allowPaging: true,
+            columns: [
+                { field: 'Id', headerText: 'Id', isPrimaryKey: true, type: 'number', visible: true },
+                {
+                    field: 'TotalPrice', headerText: 'Total Price', type: 'number',
+                    template: '#priceTemplate'
+                },
+                { field: 'OrderTotalPoint', headerText: 'Order Total Point', type: 'number' },                
+                {
+                    headerText: '', textAlign: 'Center', commands: [
+                        { buttonOption: { content: 'Order Detail', iconCss: 'e-icons e-search', cssClass: 'e-flat e-primary e-outline', click: CustomerOrderDetail } },
+                    ]
+                },
+            ],
+            aggregates: [{
+                columns: [{
+                    type: 'Sum',
+                    field: 'TotalPrice',
+                    footerTemplate: 'Total Amount: €${Sum}'
+                },
+                    {
+                        type: 'Sum',
+                        field: 'OrderTotalPoint',
+                        footerTemplate: 'Total Point:${Sum}'
+                    }
+                ]
+            }]
+        });
+
+        // Binding customer order data to customer order grid(datatable)
+        CustomerOrdersGridUpdate(grid);
+        grid.appendTo('#CustomerOrders')
+    });
+
+    // Binding customer order data to customer order grid(datatable)
+    function CustomerOrdersGridUpdate(grid) {
+        let ajax = new ej.base.Ajax({
+            url: '/Customer/GetCustomerOrdersList',
+            data: JSON.stringify(@Model.Id),  // pass the string value  
+            type: 'POST',
+            contentType: 'application/json'
+        });
+        ajax.send();
+        ajax.onSuccess = function (data) {
+            grid.dataSource = JSON.parse(data);
+        };   
+    }
+
+    //
+    function RentEquipment(customerId) {
+        $.ajaxSetup({ cache: false });
+        $.get('/Basket/CustomerBasket', {
+            customerId: customerId }, function () {
+        }).done(function (result) {
+            $('#generalModal').html(result);
+            $('.modal-dialog').addClass("modal-lg");
+        });
+    }
+
+    // Binding customer order data to customer order grid(datatable)
+    function CustomerOrderDetail(args) {
+        debugger;
+        var grid = document.getElementById("CustomerOrders").ej2_instances[0];
+        var rowObj = grid.getRowObjectFromUID(ej.base.closest(args.target, '.e-row').getAttribute('data-uid'));
+        var url = '@Url.Action("CustomerOrderDetail", "Customer")?orderId=' + rowObj.data.Id;
+        window.location.href = url;
+    }
+</script>
+
+<script id="priceTemplate" type="text/x-template">
+    <div>
+        <span>€${TotalPrice}</span>
+    </div>
+</script>

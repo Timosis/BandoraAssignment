@@ -1,0 +1,119 @@
+﻿<div class="card">
+    <div class="card-header">
+        Customer Order Detail
+    </div>
+    <div class="card-body">
+        <div id="OrderDetailGrid">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //For changing Equipment Type value with it's type name when exported
+        exportQueryCellInfo = function (args) {
+            if (args.name == "pdfQueryCellInfo") {
+                if (args.column.field == "Equipment.Type") {
+                    if (args.data.Equipment.Type == 1) {
+                        args.value = "Heavy"
+                    }
+                    if (args.data.Equipment.Type == 2) {
+                        args.value = "Regular"
+                    }
+                    if (args.data.Equipment.Type == 3) {
+                        args.value = "Specialized"
+                    }
+                }
+            }
+        };
+
+        //Order Detail Grid
+        var grid = new ej.grids.Grid({
+             allowPaging: true,
+             allowPdfExport: true,
+             toolbar: ['PdfExport'],
+             pdfQueryCellInfo: exportQueryCellInfo,
+            columns: [
+                { field: 'Id', headerText: 'Id', isPrimaryKey: true, type: 'number', visible: false },
+                { field: 'OrderId', headerText: 'Order Id', type: 'number' },
+                { field: 'Equipment.Name', headerText: 'Equipment', type: 'string' },
+                {
+                    field: 'Equipment.Type', headerText: 'Type', type: 'string',
+                    template: '#template'
+                },
+                { field: 'Days', headerText: 'Day', type: 'number' },
+                {
+                    field: 'Price', headerText: 'Price', type: 'number',
+                    template: '#priceTemplate'
+                },
+                { field: 'Points', headerText: 'Point', type: 'number' }
+            ],
+            aggregates: [{
+                columns: [{
+                    type: 'Sum',
+                    field: 'Days',
+                    footerTemplate: 'Total Days: ${Sum}'
+                },
+                {
+                        type: 'Sum',
+                        field: 'Price',
+                        footerTemplate: 'Total Price: ${Sum}'
+                },
+                {
+                        type: 'Sum',
+                         field: 'Points',
+                        footerTemplate: 'Total Point: ${Sum}'
+                }
+                ]
+            }]
+         });
+
+        //Binding Data To Grid
+        OrderDetailGridUpdate(grid, @ViewBag.OrderId);
+        grid.appendTo('#OrderDetailGrid');
+
+        //Grid Toolbar Pdf Export Function
+        grid.toolbarClick = function (args) {
+            if (args.item.id === 'OrderDetailGrid_pdfexport') {
+                grid.pdfExport();
+            }
+        };
+
+    });
+
+    // Getting grid data and binding it's datasource
+    function OrderDetailGridUpdate(grid, orderId) {
+        debugger;
+         let ajax = new ej.base.Ajax({
+             url: '/Customer/GetCustomerOrderDetail',
+            data: JSON.stringify(orderId),  // pass the string value
+            type: 'POST',
+            contentType: 'application/json'
+        });
+        ajax.send();
+        ajax.onSuccess = function (data) {
+            grid.dataSource = JSON.parse(data);
+        };
+    }
+</script>
+
+@* Equipment Type Column Template *@
+<script id="template" type="text/x-template">
+    <div>
+         ${if(Equipment.Type === 1)}
+            <span>Heavy</span>
+            ${else if(Equipment.Type === 2)}
+            <span>Regular</span>
+            ${else}
+            <span>Specialize</span>
+            ${/if}
+    </div>
+</script>
+
+@* Price Column Template *@
+<script id="priceTemplate" type="text/x-template">
+    <div>
+        <span>€${Price}</span>
+    </div>
+</script>

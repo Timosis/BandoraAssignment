@@ -1,0 +1,69 @@
+﻿
+<div class="card">
+    <div class="card-header">
+        <button  id="newCustomer" class="btn btn-success" onclick="CreateCustomer()">
+            <span>
+                <span>New Customer</span>
+            </span>
+        </button>
+    </div>
+    <div class="card-body">
+        <!--begin: Datatable -->
+        <div id="CustomersGrid">
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        // Customer grid implementation
+        var grid = new ej.grids.Grid({
+            allowPaging: true,
+            columns: [
+                { field: 'Id', headerText: 'Id', isPrimaryKey: true, type: 'number', visible: false },
+                { field: 'Firstname', headerText: 'Firstname', type: 'string' },
+                { field: 'Lastname', headerText: 'Lastname', type: 'string' },
+                { field: 'Email', headerText: 'Email', type: 'string' },
+                { field: 'Points', headerText: 'Points', type: 'string' },
+                {
+                    headerText: '', textAlign: 'Center', commands: [
+                        { buttonOption: { content: 'Rent Equiptment', iconCss: 'e-icons e-edit', cssClass: 'e-info e-outline', click: RentEquipment } },
+                    ]
+                },
+            ]
+        });
+
+        // Binding data to customer grid (datatable)
+        CustomerGridUpdate(grid);
+        grid.appendTo('#CustomersGrid');
+    });
+
+    // Redirecting renting equipment and listing given order page according to the customer
+    function RentEquipment(args) {
+        debugger;
+          var grid = document.getElementById("CustomersGrid").ej2_instances[0];
+        var rowObj = grid.getRowObjectFromUID(ej.base.closest(args.target, '.e-row').getAttribute('data-uid'));
+        var url = '@Url.Action("RentEquipment", "Customer")?customerId=' + rowObj.data.Id;
+          window.location.href = url;
+    }
+
+    // Getting create customer partial view and setting it general modal then showing it on customer page 
+    function CreateCustomer() {
+        $.ajaxSetup({ cache: false });
+        $.get('/Customer/CreateCustomerPartial', function () {
+        }).done(function (result) {
+            $('#generalModal').html(result);
+            $('#m_modal_general').modal('show');    
+        });
+    }
+
+    //Gettin customers list and binding it to customer grid (datatable) datasource
+    function CustomerGridUpdate(grid) {
+        let ajax = new ej.base.Ajax("/Customer/GetCustomers", "GET");
+        ajax.send();
+        ajax.onSuccess = function (data) {
+            grid.dataSource = JSON.parse(data);
+        };
+    }
+</script>

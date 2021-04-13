@@ -1,0 +1,278 @@
+﻿<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Rent Equipment</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-success alert-dismissible fade show" style="display: none" role="alert">
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show" style="display: none" role="alert">
+            </div>
+            <div class="alert alert-primary alert-dismissible fade show" style="display: none" role="alert">
+            </div>
+            <div class="alert alert-warning alert-dismissible fade show" style="display: none" role="alert">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-9">
+            <form id="AddItemBasket" data-ajax="true" data-ajax-method="post" class="m-form m-form--state">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="form-group">
+                            <ejs-dropdownlist id="Equipment" cssClass="e-outline" dataSource="@ViewBag.EquipmentList.Data" placeholder="Select Equiptment">
+                                <e-dropdownlist-fields text="Name" value="Id"></e-dropdownlist-fields>
+                            </ejs-dropdownlist>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-group">
+                            <ejs-numerictextbox id="Day" format="###" min="0" value="0" cssClass="e-outline" placeholder="Day" floatLabelType="Auto"></ejs-numerictextbox>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <button id="selectEquipment" type="button" onclick="javascript: AddEquipmentToBasket(@ViewBag.CustomerId);" class="btn btn-primary">Add To Basket</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Basket
+                </div>
+                <div class="card-body">
+                    <!--begin: Datatable -->
+                    <div id="BasketGrid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <button id="btnSave" onclick="javascript: CheckoutBasket(@ViewBag.CustomerId);" class="btn btn-primary">
+        Checkout
+    </button>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        // Customer Basket Grid (Datatable)
+        var grid = new ej.grids.Grid({
+            allowPaging: true,
+            columns: [
+                { field: 'Id', headerText: 'Id', isPrimaryKey: true, type: 'number', visible: false },
+                { field: 'CustomerId', headerText: 'CustomerId', type: 'number', visible: false },
+                { field: 'Equipment.Name', headerText: 'Equipment', type: 'string' },
+                {
+                    field: 'Equipment.Type', headerText: 'Type', type: 'string',
+                    template: '#template'
+                },
+                { field: 'Day', headerText: 'Day', type: 'number' },
+                {
+                    field: 'Price', headerText: 'Price', type: 'number',
+                    template: '#basketPriceTemplate'
+                },
+                {
+                    headerText: '', textAlign: 'Center', commands: [
+                        { buttonOption: { content: 'Remove', iconCss: 'e-icons e-edit', cssClass: 'e-flat e-primary e-outline', click: RemoveItemFromBasket } },
+                    ]
+                },
+            ],
+            aggregates: [{
+                columns: [{
+                    type: 'Sum',
+                    field: 'Day',
+                    footerTemplate: 'Total Days: ${Sum}'
+                },
+                {
+                        type: 'Sum',
+                        field: 'Price',
+                        footerTemplate: 'Total Price: ${Sum}'
+                }
+                ]
+            }]
+        });
+
+        // Binding Customer Basket Data To Grid (Datatable)
+        BasketGridUpdate(grid, @ViewBag.CustomerId);
+        grid.appendTo('#BasketGrid');
+    });
+
+    // Checkout basket as an order
+    function CheckoutBasket(customerId) {
+        $.ajax({
+            url: "/Basket/CheckoutBasket",
+            type: "POST",
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: { customerId: customerId } ,
+            success: function (result) {
+                if (result.Type == 1) {
+                    var grid = document.getElementById("CustomerOrders").ej2_instances[0];
+                    CustomerOrdersGridUpdate(grid);
+                    $('#generalModal').html('');
+                    $('#m_modal_general').modal('hide');
+                } else {
+                    if (result.Type == 2) {
+                        $(".alert-danger").text(result.Message).slideDown('slow').delay(1500).slideUp('slow');
+                    }
+                    else {
+                        $(".alert-warning").text(result.Message).slideDown('slow').delay(1500).slideUp('slow');;
+                    }
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $.notify("Error!");
+            }
+        });
+    }
+
+    // Removing equipment from basket grid (Datatable)
+    function RemoveItemFromBasket(args) {
+        var grid = document.getElementById("BasketGrid").ej2_instances[0];
+        var rowObj = grid.getRowObjectFromUID(ej.base.closest(args.target, '.e-row').getAttribute('data-uid'));
+
+        var removeEquipmentModel = {
+            CustomerId: rowObj.data.CustomerId,
+            EquipmentIndex : rowObj.index
+        };
+
+        $.ajax({
+            url: "/Basket/RemoveItemFromBasket",
+            type: "POST",
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: removeEquipmentModel,
+            success: function (result) {
+                debugger;
+                if (result.Type == 1) {
+                    var grid = document.getElementById("BasketGrid").ej2_instances[0];
+                    BasketGridUpdate(grid, rowObj.data.CustomerId);
+                    $('.alert-primary').text(result.Message).slideDown('slow').delay(1500).slideUp('slow');
+                } else {
+                    if (result.Type == 2) {em
+                        $(".alert-danger").text(result.Message).slideDown('slow').delay(1500).slideUp('slow');
+                    }
+                    else {
+                        $(".alert-warning").text(result.Message).slideDown('slow').delay(1500).slideUp('slow');;
+                    }
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $.notify("Error!");
+            }
+        });
+    }
+
+    // Binding data to basket grid datasource
+    function BasketGridUpdate(grid, customerId) {
+        let ajax = new ej.base.Ajax({
+            url: '/Basket/GetCustomerBasket',
+            data: JSON.stringify(customerId),  // pass the string value
+            type: 'POST',
+            contentType: 'application/json'
+        });
+        ajax.send();
+        ajax.onSuccess = function (data) {
+            debugger;
+            grid.dataSource = JSON.parse(data);
+        };
+    }
+
+    //Adding equipment customer basket without saving it as an order
+    function AddEquipmentToBasket(customerId) {
+        var option = {
+            rules: {
+                'Equipment': {
+                    required: [true]
+                },
+                'Day': {
+                    required: [true],
+                    min: 1
+                },
+            },
+            customPlacement: function (element, errorElement) {
+                element.parentNode.parentNode.appendChild(errorElement);
+            }
+        };
+        var formObj = new ej.inputs.FormValidator('#AddItemBasket', option);
+        var result = formObj.validate();
+
+        if (!result) {
+            return;
+        } else {
+            var selectedEquipment = document.getElementById("Equipment").ej2_instances[0];
+            var item = $('#AddItemBasket').serializeObject();
+            var model = {
+                CustomerId : customerId,
+                Day: item.Day,
+                Equipment : selectedEquipment.itemData
+            };
+            $.ajax({
+                url: "/Basket/AddEquipmentToBasket",
+                type: "POST",
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: model,
+                success: function (result) {
+                    if (result.Type == 1) {
+                        var grid = document.getElementById("BasketGrid").ej2_instances[0];
+                        BasketGridUpdate(grid, customerId);
+                        $('.alert-success').text(result.Message).slideDown('slow').delay(1500).slideUp('slow');
+                        ClearEquipmentAndDayValue();
+                    } else {
+                        if (result.Type == 2) {
+                            $(".alert-danger").text(result.Message).slideDown('slow').delay(1500).slideUp('slow');                        }
+                        else {
+                            $(".alert-warning").text(result.Message).slideDown('slow').delay(1500).slideUp('slow');;
+                        }
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $.notify("Hello World");
+                }
+            });
+        }
+    }
+
+    // Clear inputs when added button click
+    function ClearEquipmentAndDayValue() {
+        var equipment = document.getElementById("Equipment").ej2_instances[0];
+        var day = document.getElementById("Day").ej2_instances[0];
+        equipment.value = null;
+        day.value = 0;
+    }
+
+</script>
+
+@* Equipment Type Column Template *@
+<script id="template" type="text/x-template">
+    <div>
+         ${if(Equipment.Type === 1)}
+            <span>Heavy</span>
+            ${else if(Equipment.Type === 2)}
+            <span>Regular</span>
+            ${else}
+            <span>Specialize</span>
+            ${/if}
+    </div>
+</script>
+
+@* Price Column Template *@
+<script id="basketPriceTemplate" type="text/x-template">
+    <div>
+        <span>€ ${Price}</span>
+    </div>
+</script>
+<ejs-scripts></ejs-scripts>

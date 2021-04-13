@@ -1,0 +1,67 @@
+﻿
+<div class="card">
+    <div class="card-header">
+        <button id="newEquipment" class="btn btn-success" onclick="CreateEquipment()">
+            <span>
+                <span>New Equipments</span>
+            </span>
+        </button>
+    </div>
+    <div class="card-body">
+        <!--begin: Datatable -->
+        <div id="EquipmentsGrid">
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        var grid = new ej.grids.Grid({
+            allowPaging: true,
+            columns: [
+                { field: 'Id', headerText: 'Id', isPrimaryKey: true, type: 'number', visible: false },
+                { field: 'Name', headerText: 'Name', type: 'string' },
+                {
+                    field: 'Type', headerText: 'Type', type: 'string',
+                    template: '#template'
+                } 
+            ]
+        });
+
+        EquipmentGridUpdate(grid);
+        grid.appendTo('#EquipmentsGrid');
+    });
+
+    function CreateEquipment() {
+        debugger;
+        $.ajaxSetup({ cache: false });
+        $.get('/Equipment/CreateEquipmentPartial', function () {
+        }).done(function (result) {
+            debugger;
+            $('#generalModal').html(result);
+            $('#m_modal_general').modal('show');    
+        });
+    }
+
+    function EquipmentGridUpdate(grid) {
+        let ajax = new ej.base.Ajax("/Equipment/GetEquipments", "GET");
+        ajax.send();
+        ajax.onSuccess = function (data) {
+            debugger;
+            grid.dataSource = JSON.parse(data);
+        };
+    }
+</script>
+
+<script id="template" type="text/x-template">
+    <div>
+         ${if(Type === 1)}
+            <span>Heavy</span>
+            ${else if(Type === 2)}
+            <span>Regular</span>
+            ${else}
+            <span>Specialize</span>
+            ${/if}
+    </div>
+</script>

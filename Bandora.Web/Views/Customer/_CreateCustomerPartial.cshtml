@@ -1,0 +1,97 @@
+﻿@model Bandora.Models.CustomerVM
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">New Customer</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form id="addNewCustomer" data-ajax="true" data-ajax-method="post" class="m-form m-form--state">
+        <div class="form-group">
+            <ejs-textbox id="Firstname" ejs-for="Firstname" cssClass="e-outline" placeholder="Firstname" floatLabelType="Auto"></ejs-textbox>
+        </div>
+        <div class="form-group">
+            <ejs-textbox id="Lastname" ejs-for="Lastname" cssClass="e-outline" placeholder="Lastname" floatLabelType="Auto"></ejs-textbox>
+        </div>
+        <div class="form-group">
+            <ejs-textbox id="Email" ejs-for="Email" cssClass="e-outline" placeholder="Email" floatLabelType="Auto"></ejs-textbox>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <button id="btnSave" onclick="javascript: SaveCustomer();" class="btn btn-primary">
+        Kaydet
+    </button>
+</div>
+
+<script type="text/javascript">
+
+    // Saving customer, validating and updated customer grid(datatable) after created customer
+    function SaveCustomer() {
+        var option = {
+            rules: {
+                'Firstname': {
+                    required: [true]
+                },
+                'Lastname': {
+                    required: [true]
+                },
+                'Email': {
+                    required: [true]
+                },
+            },
+            customPlacement: function (element, errorElement) {
+                element.parentNode.parentNode.appendChild(errorElement);
+            }
+        };
+        var formObj = new ej.inputs.FormValidator('#addNewCustomer', option);
+
+        var result = formObj.validate();
+
+        if (!result) {
+            return;
+        } else {            
+            var customer = $('#addNewCustomer').serializeObject();
+            $.ajax({
+                url: "/Customer/CreateCustomer",
+                type: "POST",
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: customer,
+                success: function (result) {
+                    $('#m_modal_general').modal('hide');
+                    if (result.Type == 1) { 
+                        var grid = document.getElementById("CustomersGrid").ej2_instances[0];
+                        CustomerGridUpdate(grid);
+                        $.notify({
+                            title: '<strong>Success!</strong>',
+                            message: result.Message
+                        }, {
+                                type: 'success',
+                                animate: {
+                                    enter: 'animated fadeInRight',
+                                    exit: 'animated fadeOutRight'
+                                }
+                        });
+                    } else{
+                        if (result.Type == 2) {
+                            $.notify({
+                                title: '<strong>Error!</strong>',
+                                message: result.Message
+                            }, {
+                                type: 'danger'
+                            });
+                        }
+                    }                    
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $.notify("Hello World");
+                }
+            });
+        }
+
+    }
+</script>
+<ejs-scripts></ejs-scripts>
