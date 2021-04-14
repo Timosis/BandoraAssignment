@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bondora.Api.Migrations
 {
     [DbContext(typeof(BondoraDataContext))]
-    [Migration("20210412064009_Bandora_!")]
-    partial class Bandora_
+    [Migration("20210414084320_Bondora_1")]
+    partial class Bondora_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,6 +42,48 @@ namespace Bondora.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "ava.mackenzie@bondora",
+                            Firstname = "Ava",
+                            Lastname = "Mackenzie",
+                            Points = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "lucas.young@bondora",
+                            Firstname = "Lucas",
+                            Lastname = "Young",
+                            Points = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "dorothy.wilkins@bondora",
+                            Firstname = "Dorothy",
+                            Lastname = "Wilkins",
+                            Points = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Email = "dorothy.wilkins@bondora",
+                            Firstname = "Dominic",
+                            Lastname = "Buckland",
+                            Points = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Email = "joe.harris@bondora",
+                            Firstname = "Joe",
+                            Lastname = "Harris",
+                            Points = 0
+                        });
                 });
 
             modelBuilder.Entity("Bondora.Api.Entities.Equipment", b =>
@@ -60,6 +102,38 @@ namespace Bondora.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Equipments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Caterpillar Bulldozer",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Kamaz truck",
+                            Type = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Komatsu Crane",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Volvo Steamroller",
+                            Type = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Bosch Jackhammer",
+                            Type = 3
+                        });
                 });
 
             modelBuilder.Entity("Bondora.Api.Entities.Order", b =>

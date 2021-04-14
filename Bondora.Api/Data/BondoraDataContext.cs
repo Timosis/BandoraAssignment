@@ -18,5 +18,10 @@ namespace Bondora.Api.Data
         public DbSet<Order> Rentals { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Seed();
+        }
     }
 }

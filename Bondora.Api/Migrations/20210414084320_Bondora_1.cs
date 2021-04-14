@@ -2,7 +2,7 @@
 
 namespace Bondora.Api.Migrations
 {
-    public partial class Bandora_ : Migration
+    public partial class Bondora_1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -84,6 +84,30 @@ namespace Bondora.Api.Migrations
                         principalTable: "Order",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Customers",
+                columns: new[] { "Id", "Email", "Firstname", "Lastname", "Points" },
+                values: new object[,]
+                {
+                    { 1, "ava.mackenzie@bondora", "Ava", "Mackenzie", 0 },
+                    { 2, "lucas.young@bondora", "Lucas", "Young", 0 },
+                    { 3, "dorothy.wilkins@bondora", "Dorothy", "Wilkins", 0 },
+                    { 4, "dorothy.wilkins@bondora", "Dominic", "Buckland", 0 },
+                    { 5, "joe.harris@bondora", "Joe", "Harris", 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Equipments",
+                columns: new[] { "Id", "Name", "Type" },
+                values: new object[,]
+                {
+                    { 1, "Caterpillar Bulldozer", 1 },
+                    { 2, "Kamaz truck", 2 },
+                    { 3, "Komatsu Crane", 1 },
+                    { 4, "Volvo Steamroller", 2 },
+                    { 5, "Bosch Jackhammer", 3 }
                 });
 
             migrationBuilder.CreateIndex(
