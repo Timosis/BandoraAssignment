@@ -58,7 +58,7 @@
         });
     }
 
-    //Gettin customers list and binding it to customer grid (datatable) datasource
+    //Getting customers list and binding it to customer grid (datatable) datasource
     function CustomerGridUpdate(grid) {
         let ajax = new ej.base.Ajax("/Customer/GetCustomers", "GET");
         ajax.send();

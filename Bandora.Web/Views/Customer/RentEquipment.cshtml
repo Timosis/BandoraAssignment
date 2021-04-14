@@ -85,7 +85,7 @@
         };   
     }
 
-    //
+    // Getting created customer's basket partial view and setting it general modal then showing it on customer's order page 
     function RentEquipment(customerId) {
         $.ajaxSetup({ cache: false });
         $.get('/Basket/CustomerBasket', {
