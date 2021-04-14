@@ -11,12 +11,17 @@ namespace Bondora.Web.Controllers
 {
     public class BasketController : Controller
     {
+        /// <summary>
+        /// Api service interfaces
+        /// </summary>
         public IEquipmentApiService equipmentApiService;
         public IBasketApiService basketApiService;
         public ICustomerApiService customerApiService;
         private readonly IMemoryCache memoryCache;
 
-
+        /// <summary>
+        ///  Constructor
+        /// </summary>        
         public BasketController(IEquipmentApiService equipmentApiService,
             IBasketApiService basketApiService,
             ICustomerApiService customerApiService,
@@ -29,6 +34,11 @@ namespace Bondora.Web.Controllers
             this.memoryCache = memoryCache;
         }
 
+        /// <summary>
+        /// Adding equipment to customer basket and calculating it's price considering rental days. Saving it memorycache.
+        /// </summary>
+        /// <param name="model">Basket item model includes customerId, day, price and equipment</param>
+        /// <returns>Adding result</returns>
         public JsonResult AddEquipmentToBasket(BasketItemVM model)
         {
             ServiceResult AddEquipmentToBasketResult = new ServiceResult()
@@ -79,6 +89,11 @@ namespace Bondora.Web.Controllers
             return Json(AddEquipmentToBasketResult);
         }
 
+        /// <summary>
+        /// Removing item from cached items from customer basket
+        /// </summary>
+        /// <param name="model">Model includes customerId, equipment index at basket grid</param>
+        /// <returns>Removing result</returns>
         public JsonResult RemoveItemFromBasket(RemoveEquipmentVM model)
         {
             ServiceResult removeItemFromBasketResult = new ServiceResult()
@@ -99,6 +114,11 @@ namespace Bondora.Web.Controllers
             return Json(removeItemFromBasketResult);
         }
 
+        /// <summary>
+        ///  Getting equipment list for dropdown and opening customer's basket as a partial view
+        /// </summary>
+        /// <param name="customerId">Customer Id</param>
+        /// <returns>Partial View</returns>
         public async Task<ActionResult> CustomerBasket(int customerId)
         {
             ViewBag.CustomerId = customerId;
@@ -106,6 +126,11 @@ namespace Bondora.Web.Controllers
             return PartialView("~/Views/Basket/_CustomerBasketPartial.cshtml");
         }
 
+        /// <summary>
+        /// Getting customer's basket items for customer basket data grid. 
+        /// </summary>
+        /// <param name="customerId">Customer Id</param>
+        /// <returns>Cached items or null(if it doesn't cached)</returns>
         public JsonResult GetCustomerBasket([FromBody] string customerId)
         {
             var hasCustomerBasket = memoryCache.TryGetValue(int.Parse(customerId), out BasketVM customerBasket);
@@ -117,6 +142,11 @@ namespace Bondora.Web.Controllers
             return Json(null);
         }
 
+        /// <summary>
+        /// Checking out and calculating order price with order details
+        /// </summary>
+        /// <param name="customerId">Customer Id</param>
+        /// <returns>Service Result</returns>
         public async Task<JsonResult> CheckoutBasket(int customerId)
         {
             ServiceResult checkOutBasketResult = new ServiceResult()
@@ -155,6 +185,11 @@ namespace Bondora.Web.Controllers
             return Json(checkOutBasketResult);
         }
 
+        /// <summary>
+        /// Calculating rent price for every item which added to customer basket
+        /// </summary>
+        /// <param name="basketItem">Model includes customerId, equipment index at basket grid</param>
+        /// <returns>Basket Item Model</returns>
         public BasketItemVM CalculateRentPrice(BasketItemVM basketItem)
         {
 
