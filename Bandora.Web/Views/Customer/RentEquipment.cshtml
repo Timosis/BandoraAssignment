@@ -96,9 +96,8 @@
         });
     }
 
-    // Binding customer order data to customer order grid(datatable)
+    // Redirecting for listing customer order detail from customer order page
     function CustomerOrderDetail(args) {
-        debugger;
         var grid = document.getElementById("CustomerOrders").ej2_instances[0];
         var rowObj = grid.getRowObjectFromUID(ej.base.closest(args.target, '.e-row').getAttribute('data-uid'));
         var url = '@Url.Action("CustomerOrderDetail", "Customer")?orderId=' + rowObj.data.Id;
