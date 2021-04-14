@@ -43,7 +43,6 @@ namespace Bandora.Test
             Assert.Equal(2, result.Point);
         }
 
-
         [Fact]
         public void Calculate_Regular_Equipment_Rent_Price()
         {

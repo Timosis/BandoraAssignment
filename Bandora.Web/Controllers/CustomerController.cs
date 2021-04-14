@@ -65,28 +65,43 @@ namespace Bondora.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Opening renting equipment page with getting customer information
         /// </summary>
         /// <param name="customerId"></param>
-        /// <returns></returns>
+        /// <returns>Rent Equipment page</returns>
         public async Task<IActionResult> RentEquipment(int customerId)
         {
             var result = await customerApiService.GetCustomer(customerId);
             return View(result.Data);
         }
 
+        /// <summary>
+        /// Getting customer orders for listing them on the rent equipment page. Purpose is that listing rented equipments before.
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
         public async Task<IActionResult> GetCustomerOrdersList([FromBody]string customerId)
         {
             var result = await customerApiService.GetCustomerOrdersList(int.Parse(customerId));
             return Json(result.Data);
         }
 
+        /// <summary>
+        /// Getting customer's order details.
+        /// </summary>
+        /// <param name="orderId">Selected customer order id</param>
+        /// <returns>Customer order detail view</returns>
         public IActionResult CustomerOrderDetail(int orderId)
         {
             ViewBag.OrderId = orderId;
             return View();
         }
 
+        /// <summary>
+        ///  Getting customer's order detail by order id
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>Order detail list</returns>
         public async Task<IActionResult> GetCustomerOrderDetail([FromBody]string orderId)
         {
             var result = await customerApiService.GetCustomerOrderDetail(int.Parse(orderId));
