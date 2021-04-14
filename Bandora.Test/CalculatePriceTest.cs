@@ -58,7 +58,7 @@ namespace Bandora.Test
                 Day = 10,
                 Equipment = new EquipmentVM()
                 {
-                    Id = 1,
+                    Id = 2,
                     Name = "Kamaz Truck",
                     Type = EquiptmentType.Regular
                 }
@@ -86,7 +86,7 @@ namespace Bandora.Test
                 Day = 10,
                 Equipment = new EquipmentVM()
                 {
-                    Id = 1,
+                    Id = 5,
                     Name = "Bosch Jackhammer",
                     Type = EquiptmentType.Specialize
                 }
