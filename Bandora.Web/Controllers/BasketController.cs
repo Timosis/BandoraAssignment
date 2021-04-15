@@ -151,8 +151,8 @@ namespace Bondora.Web.Controllers
         {
             ServiceResult checkOutBasketResult = new ServiceResult()
             {
-                Type = ResultType.UnKnown,
-                Message = "Something went wrong"
+                Type = ResultType.Error,
+                Message = "Empty Basket Can Not Checkout!"
             };
 
             var hasCustomerBasket = memoryCache.TryGetValue(customerId, out BasketVM customerBasket);
@@ -177,8 +177,6 @@ namespace Bondora.Web.Controllers
 
                 if (!(customerBasket.BasketItems.Count > 0) )
                 {
-                    checkOutBasketResult.Type = ResultType.Error;
-                    checkOutBasketResult.Message = "Empty Basket Can Not Checkout!";
                     return Json(checkOutBasketResult);
                 }
 
