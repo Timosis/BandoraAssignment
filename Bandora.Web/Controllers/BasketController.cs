@@ -163,7 +163,7 @@ namespace Bondora.Web.Controllers
                 customerOrder.OrderDetails = new List<OrderDetailVM>();
                 customerBasket.BasketItems.ForEach(basketItem =>
                 {
-                    customerOrder.CustomerId = basketItem.CustomerId;
+                    customerOrder.CustomerId = customerId;
                     customerOrder.TotalPrice += basketItem.Price;
                     customerOrder.OrderTotalPoint += basketItem.Point;
                     customerOrder.OrderDetails.Add(new OrderDetailVM
@@ -174,6 +174,14 @@ namespace Bondora.Web.Controllers
                         Price = basketItem.Price
                     });
                 });
+
+                if (!(customerBasket.BasketItems.Count > 0) )
+                {
+                    checkOutBasketResult.Type = ResultType.Error;
+                    checkOutBasketResult.Message = "Empty Basket Can Not Checkout!";
+                    return Json(checkOutBasketResult);
+                }
+
                 checkOutBasketResult = await basketApiService.CheckoutCustomerBasket(customerOrder);
 
                 if (checkOutBasketResult.Type == ResultType.Success)
