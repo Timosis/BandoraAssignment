@@ -69,6 +69,7 @@ namespace Bandora.Test
 
             Assert.Equal(540, result.Price);
             Assert.Equal(1, result.Point);
+
         }
 
         [Fact]

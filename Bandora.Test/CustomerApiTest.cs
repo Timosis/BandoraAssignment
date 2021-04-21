@@ -76,7 +76,7 @@ namespace Bandora.Test
             var result = await new CustomerController(service.Object).GetCustomer(10) as ObjectResult;
             var customerResult = result.Value as ServiceResult<CustomerVM>;
 
-            Assert.Equal(10, customer.Data.Id);
+            Assert.Equal(10, customer.Data.Id); 
         }
 
         [Fact]
